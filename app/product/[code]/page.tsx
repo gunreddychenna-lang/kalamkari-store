@@ -63,34 +63,23 @@ ${img}`
 
         <div>
 
-          <h1 className="text-4xl font-bold mb-6">
+          <h1 className="text-1xl font-bold mb-6">
             Saree Details
           </h1>
 
-          <p>
-            <b>Code:</b>
-            {" "}
-            {sareeCode}
-          </p>
-
-          <p className="mt-3">
+          <p className="mt-5">
             <b>Fabric:</b>
             Banglore Silk
           </p>
 
-          <p className="mt-3">
+          <p className="mt-5">
             <b>Price:</b>
             ₹8500
           </p>
 
-          <h2 className="text-2xl mt-8 mb-4">
-            Description
-          </h2>
+        
 
-          <p className="text-gray-700">
-            Premium handcrafted
-            Kalamkari saree.
-          </p>
+    
 
           <a
             href={whatsapp}

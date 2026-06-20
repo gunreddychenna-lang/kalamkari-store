@@ -1,93 +1,117 @@
 import Catalogue from "./Catalogue";
 
 const URL =
-"https://script.google.com/macros/s/AKfycbzG61D7qrtAgiU5OFpb5882mlvWNgHANmUyklX1bQi1GrdFF6IwrGknciIkYGWQrLvahA/exec";
+  "https://script.google.com/macros/s/AKfycbzG61D7qrtAgiU5OFpb5882mlvWNgHANmUyklX1bQi1GrdFF6IwrGknciIkYGWQrLvahA/exec";
 
 async function getProducts() {
   try {
+    const res = await fetch(URL, {
+      cache: "no-store",
+    });
 
-    const res =
-      await fetch(
-        URL,
-        {
-          cache:
-            "no-store",
-        }
-      );
+    const data = await res.json();
 
-    const data =
-      await res.json();
-
-    if (
-      !Array.isArray(
-        data
-      )
-    ) {
+    if (!Array.isArray(data)) {
       return [];
     }
 
-    return data.filter(
-      (
-        p
-      ) =>
-        p?.Code &&
-        p?.Code
-          .trim()
-          .length > 0
-    );
-
+    return data.filter((p) => {
+      const code = String(p?.Code || "").trim();
+      return code.length > 0;
+    });
   } catch {
-
     return [];
   }
 }
 
 export default async function Home() {
-
-  const products =
-    await getProducts();
+  const products = await getProducts();
 
   return (
-    <main className="min-h-screen bg-[#faf5ef]">
+    <main className="min-h-screen">
+      <section className="text-center pt-10 pb-8 px-4">
+        <p className="text-sm tracking-[0.28em] uppercase text-[#9b6a22] mb-2">
+          Handcrafted South Indian Sarees
+        </p>
 
-      <section className="text-center pt-10">
-
-        <h1
-          className="
-          text-7xl
-          font-black
-          text-[#6b2f10]
-        "
-        >
+        <h1 className="traditional-title text-7xl font-black">
           KAILASH
         </h1>
 
-        <h2
-          className="
-          text-4xl
-          text-[#8a4f24]
-        "
-        >
+        <h2 className="traditional-subtitle text-4xl">
           KALAMKARI SAREES
         </h2>
 
-        <p
-          className="
-          mt-4
-          text-lg
-        "
-        >
+        <p className="mt-4 text-lg text-[#3b2417]">
           Handcrafted Pen Kalamkari Sarees Collection
         </p>
-
       </section>
 
-      <Catalogue
-        products={
-          products
-        }
-      />
+      <div className="temple-divider mb-10" />
 
+      <Catalogue products={products} />
+
+      <footer className="mt-20 bg-[#4b1609] text-[#fff4df] border-t-4 border-[#b98a35]">
+        <div className="max-w-7xl mx-auto px-6 py-10 text-center">
+          <h3 className="text-3xl font-bold mb-2">
+            Kailash Kalamkari Sarees
+          </h3>
+
+          <p className="mb-6 text-[#f8dca7]">
+            Visit us or connect with us
+          </p>
+
+          <div className="flex justify-center gap-5 flex-wrap">
+            <a
+              href="https://www.google.com/maps/place/KAILASH+Kalamkari/data=!4m2!3m1!1s0x0:0x4c1653fa15661c6a?sa=X&ved=1t:2428&ictx=111"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-14 h-14 rounded-full bg-[#fff4df] text-[#4b1609] flex items-center justify-center text-2xl hover:scale-110 transition"
+              title="Google Maps"
+            >
+              📍
+            </a>
+
+            <a
+              href="tel:+919063374020"
+              className="w-14 h-14 rounded-full bg-[#fff4df] text-[#4b1609] flex items-center justify-center text-2xl hover:scale-110 transition"
+              title="Call"
+            >
+              ☎
+            </a>
+
+            <a
+              href="https://wa.me/919063374020"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-14 h-14 rounded-full bg-[#fff4df] text-[#4b1609] flex items-center justify-center text-2xl hover:scale-110 transition"
+              title="WhatsApp"
+            >
+              ✆
+            </a>
+
+            <a
+              href="https://www.instagram.com/kailash_kalamkari_1984/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-14 h-14 rounded-full bg-[#fff4df] text-[#4b1609] flex items-center justify-center text-2xl hover:scale-110 transition"
+              title="Instagram"
+            >
+              ◎
+            </a>
+
+            <a
+              href="https://www.facebook.com/people/Kailash-Kalamkari/100069955411990/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-14 h-14 rounded-full bg-[#fff4df] text-[#4b1609] flex items-center justify-center text-2xl font-bold hover:scale-110 transition"
+              title="Facebook"
+            >
+              f
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
