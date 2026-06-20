@@ -31,7 +31,7 @@ export default async function Home() {
     <main className="min-h-screen">
       <section className="text-center pt-10 pb-8 px-4">
         <p className="text-sm tracking-[0.28em] uppercase text-[#9b6a22] mb-2">
-          Handcrafted South Indian Sarees
+          Handcrafted Srikalahasti Sarees
         </p>
 
         <h1 className="traditional-title text-7xl font-black">
@@ -43,7 +43,7 @@ export default async function Home() {
         </h2>
 
         <p className="mt-4 text-lg text-[#3b2417]">
-          Handcrafted Pen Kalamkari Sarees Collection
+          Srikalahasthi Pen Kalamkari Sarees Collection
         </p>
       </section>
 
@@ -58,7 +58,7 @@ export default async function Home() {
           </h3>
 
           <p className="mb-6 text-[#f8dca7]">
-            Visit us or connect with us
+            Click an icon below to connect with us
           </p>
 
           <div className="flex justify-center gap-5 flex-wrap">
