@@ -71,4 +71,102 @@ body {
   color: #fff4df;
   text-decoration: underline;
   text-underline-offset: 4px;
+} 
+.temple-header {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(185, 138, 53, 0.18),
+      transparent
+    ),
+    radial-gradient(
+      circle at top,
+      rgba(185, 138, 53, 0.18),
+      transparent 38%
+    );
+}
+
+.temple-name-frame {
+  padding: 12px 28px;
+  border-top: 3px solid #b98a35;
+  border-bottom: 3px solid #b98a35;
+}
+
+.traditional-title {
+  color: #6b230f;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 0 rgba(185, 138, 53, 0.22);
+}
+
+.traditional-subtitle {
+  color: #8a4f24;
+}
+
+.temple-divider {
+  height: 10px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #b98a35 0 14px,
+      transparent 14px 26px
+    );
+  opacity: 0.65;
+}
+
+.traditional-card {
+  position: relative;
+  background:
+    linear-gradient(#fffaf1, #fffaf1) padding-box,
+    linear-gradient(
+      135deg,
+      #b98a35,
+      #f5d58a,
+      #8a4f24,
+      #d8aa55
+    ) border-box;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow:
+    0 16px 38px rgba(82, 35, 12, 0.20),
+    inset 0 0 0 4px rgba(255, 244, 223, 0.95);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.traditional-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(185, 138, 53, 0.55);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.traditional-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 22px 48px rgba(82, 35, 12, 0.28),
+    inset 0 0 0 4px rgba(255, 244, 223, 0.95);
+}
+
+.traditional-button {
+  background: linear-gradient(180deg, #7a2d12, #4b1609);
+  border: 1px solid #c99a44;
+  color: #fff4df;
+  box-shadow:
+    0 8px 18px rgba(82, 35, 12, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.traditional-button:hover {
+  background: linear-gradient(180deg, #8b3618, #5b1d0b);
+}
+
+.traditional-price {
+  color: #6b230f;
+  font-weight: 900;
+  text-shadow: 0 2px 0 rgba(185, 138, 53, 0.18);
 }

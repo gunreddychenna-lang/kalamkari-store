@@ -4,27 +4,70 @@ import Link from "next/link";
 import { useState } from "react";
 
 type Product = {
-  Code: string;
+  Code?: string;
   Fabric?: string;
   Collection?: string;
   Price?: number | string;
+  Qty?: number | string;
   ["image link"]?: string;
   ["image id"]?: string;
+  [key: string]: string | number | undefined;
 };
 
 type Props = {
   products: Product[];
 };
 
+function getValue(product: Product, keys: string[]) {
+  for (const key of keys) {
+    const value = product[key];
+
+    if (value !== undefined && value !== null && String(value).trim()) {
+      return String(value).trim();
+    }
+  }
+
+  return "";
+}
+
+function getProductCode(product: Product) {
+  return getValue(product, ["Code", "aCode", "code"]);
+}
+
+function getProductFabric(product: Product) {
+  return getValue(product, ["Fabric", "bFabric", "fabric"]) || "Others";
+}
+
+function getProductPrice(product: Product) {
+  return getValue(product, ["Price", "ePrice", "price"]);
+}
+
+function getProductQty(product: Product) {
+  return Number(getValue(product, ["Qty", "fQty", "qty"]) || 0);
+}
+
 function getDriveId(product: Product) {
-  const rawId = product["image id"]?.trim();
-  const rawLink = product["image link"]?.trim() || "";
+  const rawId = getValue(product, [
+    "image id",
+    "jimage id",
+    "File ID",
+    "file id",
+    "Image ID",
+  ]);
+
+  const rawLink = getValue(product, [
+    "image link",
+    "gimage link",
+    "Drive Link",
+    "Thumbnail Link",
+    "thumbnail link",
+  ]);
 
   if (rawId && !rawId.includes("http")) {
     return rawId;
   }
 
-  const source = rawId?.includes("http") ? rawId : rawLink;
+  const source = rawId.includes("http") ? rawId : rawLink;
 
   return (
     source.match(/\/file\/d\/([^/]+)/)?.[1] ||
@@ -36,20 +79,27 @@ function getDriveId(product: Product) {
 
 function getImageSources(product: Product) {
   const id = getDriveId(product);
-  const imageLink = product["image link"]?.trim() || "";
+
+  const imageLink = getValue(product, [
+    "image link",
+    "gimage link",
+    "Drive Link",
+    "Thumbnail Link",
+    "thumbnail link",
+  ]);
 
   if (!id) {
     return imageLink ? [imageLink] : [];
   }
 
   return [
-    `https://drive.google.com/thumbnail?id=${id}&sz=w2000`,
+    `https://drive.google.com/thumbnail?id=${id}&sz=w1200`,
     `https://drive.usercontent.google.com/download?id=${id}&export=view`,
     `https://drive.google.com/uc?export=view&id=${id}`,
   ];
 }
 
-function getPriceNumber(price: Product["Price"]) {
+function getPriceNumber(price: string | number | undefined) {
   if (typeof price === "number") {
     return price;
   }
@@ -66,8 +116,8 @@ function formatPrice(price: number) {
 
 function getFabricPriceRange(products: Product[], fabric: string) {
   const prices = products
-    .filter((p) => (p.Fabric || "Others") === fabric)
-    .map((p) => getPriceNumber(p.Price))
+    .filter((p) => getProductFabric(p) === fabric)
+    .map((p) => getPriceNumber(getProductPrice(p)))
     .filter((price): price is number => price !== null);
 
   if (prices.length === 0) {
@@ -81,7 +131,7 @@ function getFabricPriceRange(products: Product[], fabric: string) {
     return `₹${formatPrice(min)}`;
   }
 
-  return `₹${formatPrice(min)}-₹${formatPrice(max)}`;
+  return `₹${formatPrice(min)} to ₹${formatPrice(max)}`;
 }
 
 function ProductImage({ product }: { product: Product }) {
@@ -94,10 +144,10 @@ function ProductImage({ product }: { product: Product }) {
   return (
     <img
       src={sources[index] || fallback}
-      alt={product.Fabric || "Kalamkari saree"}
+      alt={getProductFabric(product)}
       style={{
         width: "100%",
-        height: "400px",
+        height: "clamp(260px, 45vw, 400px)",
         objectFit: "cover",
         borderRadius: "10px",
         border: "1px solid rgba(185, 138, 53, 0.45)",
@@ -118,23 +168,50 @@ export default function Catalogue({ products }: Props) {
   const safeProducts = Array.isArray(products) ? products : [];
 
   const [selected, setSelected] = useState("All");
+  const [search, setSearch] = useState("");
 
   const collections = [
     "All",
-    ...Array.from(
-      new Set(safeProducts.map((p) => p.Fabric || "Others"))
-    ),
+    ...Array.from(new Set(safeProducts.map((p) => getProductFabric(p)))),
   ];
 
-  const filtered =
-    selected === "All"
-      ? safeProducts
-      : safeProducts.filter(
-          (p) => (p.Fabric || "Others") === selected
-        );
+  const filtered = safeProducts.filter((p) => {
+    const fabric = getProductFabric(p);
+    const code = getProductCode(p);
+    const price = getProductPrice(p);
+
+    const matchesCategory =
+      selected === "All" || fabric === selected;
+
+    const matchesSearch = `${fabric} ${code} ${price}`
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <div className="max-w-7xl mx-auto px-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="max-w-md mx-auto mb-8">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search fabric, code, price..."
+          className="
+            w-full
+            px-5
+            py-3
+            rounded-full
+            border
+            border-[#b98a35]
+            bg-[#fffaf1]
+            text-[#2b170d]
+            outline-none
+            shadow-sm
+          "
+        />
+      </div>
+
       <div className="flex gap-4 justify-center flex-wrap mb-12">
         {collections.map((c) => {
           const priceRange =
@@ -148,18 +225,19 @@ export default function Catalogue({ products }: Props) {
               onClick={() => setSelected(c)}
               className="
                 traditional-button
-                px-6
-                py-2
+                px-7
+                py-3
                 rounded-full
-                min-w-[120px]
+                min-w-[145px]
+                shadow-md
               "
             >
-              <span className="block text-sm font-semibold">
+              <span className="block text-base font-bold leading-tight">
                 {c}
               </span>
 
               {priceRange && (
-                <span className="block text-xs opacity-90">
+                <span className="block text-sm font-extrabold opacity-100 mt-1 leading-tight">
                   {priceRange}
                 </span>
               )}
@@ -168,27 +246,70 @@ export default function Catalogue({ products }: Props) {
         })}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
-        {filtered.map((product, index) => (
-          <Link
-            key={`${product.Code}-${index}`}
-            href={`/product/${product.Code}`}
-          >
-            <div className="traditional-card cursor-pointer">
-              <ProductImage product={product} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        {filtered.map((product, index) => {
+          const code = getProductCode(product);
+          const fabric = getProductFabric(product);
+          const price = getProductPrice(product);
+          const qty = getProductQty(product);
+          const isSoldOut = qty <= 0;
+
+          const card = (
+            <div
+              className={`
+                traditional-card
+                ${isSoldOut ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
+              `}
+            >
+              <div className="relative">
+                <ProductImage product={product} />
+
+                <div
+                  className={`
+                    absolute
+                    top-3
+                    left-3
+                    px-3
+                    py-1
+                    rounded-full
+                    text-xs
+                    font-bold
+                    ${
+                      isSoldOut
+                        ? "bg-red-700 text-white"
+                        : "bg-green-700 text-white"
+                    }
+                  `}
+                >
+                  {isSoldOut ? "Sold Out" : "Available"}
+                </div>
+              </div>
 
               <div className="mt-4 text-center">
-                <div className="text-2xl font-bold text-[#2b170d]">
-                  {product.Fabric}
+                <div className="text-xl sm:text-2xl font-bold text-[#2b170d]">
+                  {fabric}
                 </div>
 
-                <div className="traditional-price text-3xl">
-                  ₹{product.Price}
+                <div className="traditional-price text-3xl sm:text-4xl leading-tight mt-1">
+                  ₹{price}
                 </div>
               </div>
             </div>
-          </Link>
-        ))}
+          );
+
+          if (isSoldOut) {
+            return <div key={`${code}-${index}`}>{card}</div>;
+          }
+
+          return (
+            <Link
+              key={`${code}-${index}`}
+              href={`/product/${code}`}
+            >
+              {card}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

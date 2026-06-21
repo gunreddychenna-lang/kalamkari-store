@@ -16,7 +16,7 @@ async function getProducts() {
     }
 
     return data.filter((p) => {
-      const code = String(p?.Code || "").trim();
+      const code = String(p?.Code || p?.aCode || "").trim();
       return code.length > 0;
     });
   } catch {
@@ -29,20 +29,18 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen">
-      <section className="text-center pt-10 pb-8 px-4">
-        <p className="text-sm tracking-[0.28em] uppercase text-[#9b6a22] mb-2">
-          Handcrafted Srikalahasti Sarees
-        </p>
+      <section className="temple-header text-center pt-12 pb-10 px-4">
+        <div className="temple-name-frame inline-block">
+          <h1 className="traditional-title text-7xl font-black leading-none">
+            KAILASH
+          </h1>
 
-        <h1 className="traditional-title text-7xl font-black">
-          KAILASH
-        </h1>
+          <h2 className="traditional-subtitle text-4xl tracking-wide">
+            KALAMKARI SAREES
+          </h2>
+        </div>
 
-        <h2 className="traditional-subtitle text-4xl">
-          KALAMKARI SAREES
-        </h2>
-
-        <p className="mt-4 text-lg text-[#3b2417]">
+        <p className="mt-5 text-lg text-[#3b2417] font-semibold">
           Srikalahasthi Pen Kalamkari Sarees Collection
         </p>
       </section>
@@ -56,6 +54,10 @@ export default async function Home() {
           <h3 className="text-3xl font-bold mb-2">
             Kailash Kalamkari Sarees
           </h3>
+
+          <p className="mb-2 text-[#f8dca7]">
+            Srikalahasthi Pen Kalamkari Heritage Collection
+          </p>
 
           <p className="mb-6 text-[#f8dca7]">
             Click an icon below to connect with us
@@ -81,7 +83,7 @@ export default async function Home() {
             </a>
 
             <a
-              href="https://wa.me/919063374020"
+              href="https://wa.me/919951821516"
               target="_blank"
               rel="noopener noreferrer"
               className="w-14 h-14 rounded-full bg-[#fff4df] text-[#4b1609] flex items-center justify-center text-2xl hover:scale-110 transition"
