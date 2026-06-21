@@ -103,7 +103,7 @@ ${img}`
   const upi =
     `upi://pay?pa=${encodeURIComponent(upiId)}` +
     `&pn=${encodeURIComponent("Kailash Kalamkari")}` +
-    `&am=${price}` +
+    `&am=${encodeURIComponent(String(price))}` +
     `&cu=INR` +
     `&tn=${encodeURIComponent(`Payment for saree ${sareeCode}`)}`;
 
