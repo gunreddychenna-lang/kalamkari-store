@@ -231,131 +231,68 @@ export default function Catalogue({ products }: Props) {
       </div>
 
       {/* Fabric Category Buttons */}
-      <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-4 sm:justify-center sm:flex-wrap mb-12">
-<<<<<<< HEAD
-        {collections.map((c) => {
-          const priceRange = getFabricPriceRange(safeProducts, c);
-          const isActive = selected === c;
-=======
-        {collections.map((c, index) => {
-          const priceRange = getFabricPriceRange(safeProducts, c);
-          const isActive = selected === c;
+      {/* Fabric Category Buttons */}
+<div className="grid grid-cols-2 gap-3 sm:flex sm:gap-4 sm:justify-center sm:flex-wrap mb-12">
+  {collections.map((c, index) => {
+    const priceRange = getFabricPriceRange(safeProducts, c);
+    const isActive = selected === c;
 
-          // Lighter golden/brown color palette
-          const colors = [
-            { bg: 'linear-gradient(135deg, #f5d58a, #e8c068)', border: '#d4a84b', shadow: 'rgba(212, 168, 75, 0.4)' },
-            { bg: 'linear-gradient(135deg, #f5c9a6, #e8b088)', border: '#d4a07a', shadow: 'rgba(212, 160, 122, 0.4)' },
-            { bg: 'linear-gradient(135deg, #f5a6d5, #e888c0)', border: '#d47aa8', shadow: 'rgba(212, 122, 168, 0.4)' },
-            { bg: 'linear-gradient(135deg, #a6d5f5, #88c0e8)', border: '#7aa8d4', shadow: 'rgba(122, 168, 212, 0.4)' },
-            { bg: 'linear-gradient(135deg, #d5f5a6, #c0e888)', border: '#a8d47a', shadow: 'rgba(168, 212, 122, 0.4)' },
-            { bg: 'linear-gradient(135deg, #f5d5a6, #e8c088)', border: '#d4b87a', shadow: 'rgba(212, 184, 122, 0.4)' },
-            { bg: 'linear-gradient(135deg, #d5a6f5, #c088e8)', border: '#a87ad4', shadow: 'rgba(168, 122, 212, 0.4)' },
-            { bg: 'linear-gradient(135deg, #f5a6a6, #e88888)', border: '#d47a7a', shadow: 'rgba(212, 122, 122, 0.4)' },
-          ];
-          const color = colors[index % colors.length];
->>>>>>> 6a6efa0 (Updated website design and fixes)
+    const colors = [
+      {
+        bg: "linear-gradient(135deg, #f5d58a, #e8c068)",
+        border: "#d4a84b",
+        shadow: "rgba(212,168,75,0.4)",
+      },
+      {
+        bg: "linear-gradient(135deg, #f5c9a6, #e8b088)",
+        border: "#d4a07a",
+        shadow: "rgba(212,160,122,0.4)",
+      },
+      {
+        bg: "linear-gradient(135deg, #f5a6d5, #e888c0)",
+        border: "#d47aa8",
+        shadow: "rgba(212,122,168,0.4)",
+      },
+      {
+        bg: "linear-gradient(135deg, #a6d5f5, #88c0e8)",
+        border: "#7aa8d4",
+        shadow: "rgba(122,168,212,0.4)",
+      },
+    ];
 
-          return (
-            <button
-              key={c}
-              onClick={() => setSelected(isActive ? "All" : c)}
-              style={{
-<<<<<<< HEAD
-                background: isActive
-                  ? "linear-gradient(to bottom, #88220a, #4a0f02) padding-box, linear-gradient(135deg, #fff4df, #f5d58a, #b98a35, #f5d58a, #fff4df) border-box"
-                  : "linear-gradient(to bottom, #250f08, #120603) padding-box, linear-gradient(135deg, #b98a35, #8a4f24, #b98a35) border-box",
-                border: "2.5px solid transparent",
-                borderRadius: "18px",
-                boxShadow: isActive
-                  ? "0 8px 24px rgba(136, 34, 10, 0.35), inset 0 0 0 1px rgba(255, 244, 223, 0.15)"
-                  : "0 4px 12px rgba(0, 0, 0, 0.25)",
-=======
-                background: isActive ? color.bg : 'linear-gradient(135deg, #fffaf1, #f5e6d3)',
-                border: isActive ? `3px solid ${color.border}` : '2px solid #d4a84b',
-                borderRadius: "18px",
-                boxShadow: isActive
-                  ? `0 8px 24px ${color.shadow}, 0 0 0 4px ${color.border}33`
-                  : '0 4px 12px rgba(212, 168, 75, 0.2)',
->>>>>>> 6a6efa0 (Updated website design and fixes)
-              }}
-              className={`
-                relative
-                overflow-hidden
-                px-5
-                py-3.5
-                transition-all
-                duration-300
-                text-center
-                flex
-                flex-col
-                justify-center
-                items-center
-                cursor-pointer
-                min-h-[80px]
-                hover:translate-y-[-2px]
-                ${
-                  isActive
-<<<<<<< HEAD
-                    ? "text-[#ffffff] scale-[0.98] ring-2 ring-[#f5d58a]/40"
-                    : "text-[#fff4df]/80 hover:text-white"
-                }
-              `}
-            >
-              {/* Gold Peacock Watermark inside button */}
-              <svg
-                viewBox="0 0 100 100"
-                className={`absolute right-1 bottom-1 h-9 w-9 text-[#d8aa55] pointer-events-none transition-opacity duration-300 ${
-                  isActive ? "opacity-35" : "opacity-15"
-                }`}
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M 30,70 C 22,67 15,60 15,47 C 15,35 25,30 27,20 C 29,14 25,10 26.5,5 C 27,3 29.5,2.5 30.5,4 C 31.5,6 30,9 31,12.5 C 32,17.5 37.5,22.5 40,30 C 42.5,37.5 40,47.5 36,57.5 C 34,62.5 30,70 30,70 Z" />
-                <path d="M 37.5,32.5 C 47.5,27.5 62.5,25 75,35 C 85,43 87.5,55 82.5,65 C 77.5,75 62.5,82.5 47.5,77.5 C 40,75 36,67.5 36,67.5" stroke="currentColor" strokeWidth="1" fill="none" />
-                <circle cx="25" cy="11" r="1" />
-              </svg>
+    const color = colors[index % colors.length];
 
-              {/* Fabric Name */}
-              <span className="block text-xs sm:text-sm font-black tracking-wider uppercase leading-tight relative z-10 pr-2">
-                {c}
-              </span>
+    return (
+      <button
+        key={c}
+        onClick={() => setSelected(isActive ? "All" : c)}
+        style={{
+          background: isActive
+            ? color.bg
+            : "linear-gradient(135deg, #fffaf1, #f5e6d3)",
+          border: isActive
+            ? `3px solid ${color.border}`
+            : "2px solid #d4a84b",
+          borderRadius: "18px",
+          boxShadow: isActive
+            ? `0 8px 24px ${color.shadow}`
+            : "0 4px 12px rgba(212,168,75,0.2)",
+        }}
+        className="px-5 py-3 text-center transition-all duration-300 min-h-[80px]"
+      >
+        <span className="block text-xs sm:text-sm font-black uppercase">
+          {c}
+        </span>
 
-              {/* Price Range - Stylized & High Visibility */}
-              {priceRange && (
-                <span
-                  className={`block text-[11px] sm:text-xs font-black mt-2 px-2.5 py-0.5 rounded-full border border-dashed relative z-10 shadow-inner ${
-                    isActive
-                      ? "text-[#ffffff] bg-[#aa2c0e] border-[#fff4df]/40"
-                      : "text-[#f5d58a] bg-[#1a0a05] border-[#b98a35]/30"
-=======
-                    ? "text-[#6b230f] scale-[1.02]"
-                    : "text-[#6b230f] hover:text-[#4a1808]"
-                }
-              `}
-            >
-              {/* Fabric Name */}
-              <span className="block text-xs sm:text-sm font-black tracking-wider uppercase leading-tight relative z-10">
-                {c}
-              </span>
-
-              {/* Price Range */}
-              {priceRange && (
-                <span
-                  className={`block text-[11px] sm:text-xs font-bold mt-2 px-2.5 py-0.5 rounded-full border relative z-10 ${
-                    isActive
-                      ? "text-[#6b230f] bg-white/40 border-[#6b230f]/30"
-                      : "text-[#6b230f] bg-[#fffaf1] border-[#d4a84b]/50"
->>>>>>> 6a6efa0 (Updated website design and fixes)
-                  }`}
-                >
-                  {priceRange}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
+        {priceRange && (
+          <span className="block text-[11px] sm:text-xs font-bold mt-2">
+            {priceRange}
+          </span>
+        )}
+      </button>
+    );
+  })}
+</div>
       {/* Product Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered.map((product, index) => {
