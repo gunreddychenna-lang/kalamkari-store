@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { FaSearch, FaTimes } from "react-icons/fa";
 
 type Product = {
   Code?: string;
@@ -78,8 +79,6 @@ function getDriveId(product: Product) {
 }
 
 function getImageSources(product: Product) {
-  const id = getDriveId(product);
-
   const imageLink = getValue(product, [
     "image link",
     "gimage link",
@@ -88,15 +87,22 @@ function getImageSources(product: Product) {
     "thumbnail link",
   ]);
 
+  const id = getDriveId(product);
+
   if (!id) {
     return imageLink ? [imageLink] : [];
   }
 
+  const safeId = encodeURIComponent(id);
+
   return [
-    `https://drive.google.com/thumbnail?id=${id}&sz=w1200`,
-    `https://drive.usercontent.google.com/download?id=${id}&export=view`,
-    `https://drive.google.com/uc?export=view&id=${id}`,
-  ];
+    `https://drive.google.com/thumbnail?id=${safeId}&sz=w1200`,
+    `https://drive.google.com/uc?export=view&id=${safeId}`,
+    `https://lh3.googleusercontent.com/d/${safeId}=w1200`,
+    `https://drive.usercontent.google.com/download?id=${safeId}&export=view`,
+    imageLink,
+    `/api/image?id=${safeId}&size=1200`,
+  ].filter(Boolean) as string[];
 }
 
 function getPriceNumber(price: string | number | undefined) {
@@ -110,10 +116,12 @@ function getPriceNumber(price: string | number | undefined) {
   return Number.isFinite(value) ? value : null;
 }
 
+// Format number to lakhs/crores/thousands system
 function formatPrice(price: number) {
   return price.toLocaleString("en-IN");
 }
 
+// Get price ranges for each category
 function getFabricPriceRange(products: Product[], fabric: string) {
   const prices = products
     .filter((p) => getProductFabric(p) === fabric)
@@ -145,6 +153,9 @@ function ProductImage({ product }: { product: Product }) {
     <img
       src={sources[index] || fallback}
       alt={getProductFabric(product)}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
       style={{
         width: "100%",
         height: "clamp(260px, 45vw, 400px)",
@@ -155,7 +166,7 @@ function ProductImage({ product }: { product: Product }) {
       }}
       onError={() => {
         if (index < sources.length - 1) {
-          setIndex(index + 1);
+          setIndex((prev) => prev + 1);
         } else {
           setIndex(sources.length);
         }
@@ -170,18 +181,20 @@ export default function Catalogue({ products }: Props) {
   const [selected, setSelected] = useState("All");
   const [search, setSearch] = useState("");
 
-  const collections = [
-    "All",
-    ...Array.from(new Set(safeProducts.map((p) => getProductFabric(p)))),
-  ];
+  const collections = Array.from(new Set(safeProducts.map((p) => getProductFabric(p))));
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && safeProducts.length > 0) {
+      sessionStorage.setItem("kalamkari_products", JSON.stringify(safeProducts));
+    }
+  }, [safeProducts]);
 
   const filtered = safeProducts.filter((p) => {
     const fabric = getProductFabric(p);
     const code = getProductCode(p);
     const price = getProductPrice(p);
 
-    const matchesCategory =
-      selected === "All" || fabric === selected;
+    const matchesCategory = selected === "All" || fabric === selected;
 
     const matchesSearch = `${fabric} ${code} ${price}`
       .toLowerCase()
@@ -192,52 +205,101 @@ export default function Catalogue({ products }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6">
-      <div className="max-w-md mx-auto mb-8">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search fabric, code, price..."
-          className="
-            w-full
-            px-5
-            py-3
-            rounded-full
-            border
-            border-[#b98a35]
-            bg-[#fffaf1]
-            text-[#2b170d]
-            outline-none
-            shadow-sm
-          "
-        />
+      {/* Search Bar */}
+      <div className="flex justify-center mb-6">
+        <div className="w-full max-w-md flex items-center gap-3 px-5 py-3 rounded-full border border-[#b98a35] bg-[#fffaf1] shadow-sm">
+          <FaSearch className="text-[#7a2d12] shrink-0" />
+
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search fabric, code, price..."
+            className="w-full min-w-0 bg-transparent text-[#2b170d] outline-none"
+          />
+
+          {search && (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setSearch("")}
+              className="text-[#7a2d12] shrink-0 cursor-pointer"
+            >
+              <FaTimes />
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="flex gap-4 justify-center flex-wrap mb-12">
+      {/* Fabric Category Buttons */}
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-4 sm:justify-center sm:flex-wrap mb-12">
         {collections.map((c) => {
-          const priceRange =
-            c === "All"
-              ? ""
-              : getFabricPriceRange(safeProducts, c);
+          const priceRange = getFabricPriceRange(safeProducts, c);
+          const isActive = selected === c;
 
           return (
             <button
               key={c}
-              onClick={() => setSelected(c)}
-              className="
-                traditional-button
-                px-7
-                py-3
-                rounded-full
-                min-w-[145px]
-                shadow-md
-              "
+              onClick={() => setSelected(isActive ? "All" : c)}
+              style={{
+                background: isActive
+                  ? "linear-gradient(to bottom, #88220a, #4a0f02) padding-box, linear-gradient(135deg, #fff4df, #f5d58a, #b98a35, #f5d58a, #fff4df) border-box"
+                  : "linear-gradient(to bottom, #250f08, #120603) padding-box, linear-gradient(135deg, #b98a35, #8a4f24, #b98a35) border-box",
+                border: "2.5px solid transparent",
+                borderRadius: "18px",
+                boxShadow: isActive
+                  ? "0 8px 24px rgba(136, 34, 10, 0.35), inset 0 0 0 1px rgba(255, 244, 223, 0.15)"
+                  : "0 4px 12px rgba(0, 0, 0, 0.25)",
+              }}
+              className={`
+                relative
+                overflow-hidden
+                px-5
+                py-3.5
+                transition-all
+                duration-300
+                text-center
+                flex
+                flex-col
+                justify-center
+                items-center
+                cursor-pointer
+                min-h-[80px]
+                hover:translate-y-[-2px]
+                ${
+                  isActive
+                    ? "text-[#ffffff] scale-[0.98] ring-2 ring-[#f5d58a]/40"
+                    : "text-[#fff4df]/80 hover:text-white"
+                }
+              `}
             >
-              <span className="block text-base font-bold leading-tight">
+              {/* Gold Peacock Watermark inside button */}
+              <svg
+                viewBox="0 0 100 100"
+                className={`absolute right-1 bottom-1 h-9 w-9 text-[#d8aa55] pointer-events-none transition-opacity duration-300 ${
+                  isActive ? "opacity-35" : "opacity-15"
+                }`}
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M 30,70 C 22,67 15,60 15,47 C 15,35 25,30 27,20 C 29,14 25,10 26.5,5 C 27,3 29.5,2.5 30.5,4 C 31.5,6 30,9 31,12.5 C 32,17.5 37.5,22.5 40,30 C 42.5,37.5 40,47.5 36,57.5 C 34,62.5 30,70 30,70 Z" />
+                <path d="M 37.5,32.5 C 47.5,27.5 62.5,25 75,35 C 85,43 87.5,55 82.5,65 C 77.5,75 62.5,82.5 47.5,77.5 C 40,75 36,67.5 36,67.5" stroke="currentColor" strokeWidth="1" fill="none" />
+                <circle cx="25" cy="11" r="1" />
+              </svg>
+
+              {/* Fabric Name */}
+              <span className="block text-xs sm:text-sm font-black tracking-wider uppercase leading-tight relative z-10 pr-2">
                 {c}
               </span>
 
+              {/* Price Range - Stylized & High Visibility */}
               {priceRange && (
-                <span className="block text-sm font-extrabold opacity-100 mt-1 leading-tight">
+                <span
+                  className={`block text-[11px] sm:text-xs font-black mt-2 px-2.5 py-0.5 rounded-full border border-dashed relative z-10 shadow-inner ${
+                    isActive
+                      ? "text-[#ffffff] bg-[#aa2c0e] border-[#fff4df]/40"
+                      : "text-[#f5d58a] bg-[#1a0a05] border-[#b98a35]/30"
+                  }`}
+                >
                   {priceRange}
                 </span>
               )}
@@ -245,8 +307,9 @@ export default function Catalogue({ products }: Props) {
           );
         })}
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
+      {/* Product Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered.map((product, index) => {
           const code = getProductCode(product);
           const fabric = getProductFabric(product);
@@ -256,32 +319,21 @@ export default function Catalogue({ products }: Props) {
 
           const card = (
             <div
-              className={`
-                traditional-card
-                ${isSoldOut ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
-              `}
+              className={`traditional-card ${
+                isSoldOut ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+              }`}
             >
               <div className="relative">
                 <ProductImage product={product} />
 
                 <div
-                  className={`
-                    absolute
-                    top-3
-                    left-3
-                    px-3
-                    py-1
-                    rounded-full
-                    text-xs
-                    font-bold
-                    ${
-                      isSoldOut
-                        ? "bg-red-700 text-white"
-                        : "bg-green-700 text-white"
-                    }
-                  `}
+                  className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold ${
+                    isSoldOut
+                      ? "bg-red-700 text-white border border-red-800"
+                      : "bg-green-700 text-white"
+                  }`}
                 >
-                  {isSoldOut ? "Sold Out" : "Available"}
+                  {isSoldOut ? "Sold Out" : "20% OFF"}
                 </div>
               </div>
 
@@ -302,10 +354,7 @@ export default function Catalogue({ products }: Props) {
           }
 
           return (
-            <Link
-              key={`${code}-${index}`}
-              href={`/product/${code}`}
-            >
+            <Link key={`${code}-${index}`} href={`/product/${code}`}>
               {card}
             </Link>
           );
