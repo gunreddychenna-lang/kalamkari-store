@@ -203,6 +203,13 @@ export default function Catalogue({ products }: Props) {
     return matchesCategory && matchesSearch;
   });
 
+  // Sort products by price (lowest to highest)
+  const sortedFiltered = [...filtered].sort((a, b) => {
+    const priceA = getPriceNumber(getProductPrice(a)) || 0;
+    const priceB = getPriceNumber(getProductPrice(b)) || 0;
+    return priceA - priceB;
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6">
       {/* Search Bar */}
@@ -291,10 +298,10 @@ export default function Catalogue({ products }: Props) {
                 {c}
               </span>
 
-              {/* Price Range - Stylized & High Visibility */}
+              {/* Price Range - Increased Size */}
               {priceRange && (
                 <span
-                  className={`block text-[11px] sm:text-xs font-black mt-2 px-2.5 py-0.5 rounded-full border border-dashed relative z-10 shadow-inner ${
+                  className={`block text-sm sm:text-base font-black mt-2 px-2.5 py-0.5 rounded-full border border-dashed relative z-10 shadow-inner ${
                     isActive
                       ? "text-[#ffffff] bg-[#aa2c0e] border-[#fff4df]/40"
                       : "text-[#f5d58a] bg-[#1a0a05] border-[#b98a35]/30"
@@ -308,9 +315,9 @@ export default function Catalogue({ products }: Props) {
         })}
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid - Sorted by Price */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filtered.map((product, index) => {
+        {sortedFiltered.map((product, index) => {
           const code = getProductCode(product);
           const fabric = getProductFabric(product);
           const price = getProductPrice(product);

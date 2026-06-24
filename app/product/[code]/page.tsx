@@ -11,7 +11,7 @@ import {
 } from "react";
 
 const URL =
-  "https://script.google.com/macros/s/AKfycbzG61D7qrtAgiU5OFpb5882mlvWNgHANmUyklX1bQi1GrdFF6IwrGknciIkYGWQrLvahA/exec";
+  "https://script.google.com/macros/s/AKfycbxGqk4NZAfZV_5bfVUQT_KLbTEIS33q_bVLxSBYSZYzALph7IL6n3XAy1gobhkEhE-YRw/exec";
 
 type Product = {
   Code?: string;
