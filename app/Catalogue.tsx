@@ -319,15 +319,11 @@ export default function Catalogue({ products }: Props) {
               <div className="relative">
                 <ProductImage product={product} />
 
-                <div
-                  className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold ${
-                    isSoldOut
-                      ? "bg-red-700 text-white border border-red-800"
-                      : "bg-green-700 text-white"
-                  }`}
-                >
-                  {isSoldOut ? "Sold Out" : "20% OFF"}
-                </div>
+                {isSoldOut && (
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-red-700 text-white border border-red-800">
+                    Sold Out
+                  </div>
+                )}
               </div>
 
               <div className="mt-4 text-center">
