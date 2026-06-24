@@ -218,7 +218,6 @@ export default function ProductPage() {
   const isSoldOut = qty <= 0;
 
   const originalPrice = getPriceNumber(product.Price);
-  const discountedPrice = Math.round(originalPrice * 0.8);
 
   const whatsapp = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     `Hi, I am interested in this saree.\n\nSaree Code: ${sareeCode}\n\nImage:\n${shareImg}`
@@ -271,21 +270,15 @@ export default function ProductPage() {
           {originalPrice > 0 ? (
             <div className="bg-[#fffaf1] border border-[#f5d58a] rounded-2xl p-4 mb-6 shadow-sm">
               <div className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">
-                Special Offer Price
+                Price
               </div>
               <div className="flex items-baseline gap-2.5 flex-wrap">
                 <span className="text-3xl sm:text-4xl font-black text-[#6b230f]">
-                  ₹{formatPrice(discountedPrice)}
-                </span>
-                <span className="text-base sm:text-lg text-gray-400 line-through font-medium">
                   ₹{formatPrice(originalPrice)}
                 </span>
                 <span className="bg-green-700 text-white text-xs px-2.5 py-1 rounded-full font-bold">
                   20% OFF
                 </span>
-              </div>
-              <div className="text-xs text-[#8a4f24] mt-2 font-semibold">
-                ✨ Save ₹{formatPrice(originalPrice - discountedPrice)} on this purchase
               </div>
             </div>
           ) : (
